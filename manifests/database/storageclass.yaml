@@ -1,0 +1,6 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: aws-ebs-csi
+  namespace: final
+provisioner: ebs.csi.aws.com

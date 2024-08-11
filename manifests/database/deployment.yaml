@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: final
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: database-container
+        image: 847201028015.dkr.ecr.us-east-1.amazonaws.com/docker-prod-containers-database:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        envFrom:
+          - secretRef:
+              name: secrets
+        ports:
+        - containerPort: 3306
+      volumes:
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: database-pvc
