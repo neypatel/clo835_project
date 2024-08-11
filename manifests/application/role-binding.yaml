@@ -1,0 +1,14 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: final
+  name: clo835
+subjects:
+- kind: ServiceAccount
+  name: clo835
+  namespace: final
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: clo835
+  apiGroup: rbac.authorization.k8s.io
