@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application
+  namespace: final
+  labels:
+    app: employees
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: employees
+
+  template:
+    metadata:
+      labels:
+        app: employees
+
+    spec:
+      serviceAccountName: clo835
+      containers:
+        - name: application-container
+          image: 847201028015.dkr.ecr.us-east-1.amazonaws.com/docker-prod-containers-application:latest
+          imagePullPolicy: Always
+          env:
+            - name: DBPWD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: MYSQL_ROOT_PASSWORD
+            - name: DBHOST
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: DBHOST
+            - name: DBUSER
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: DBUSER
+            - name: DBPORT
+              value: "3306"
+            - name: GROUP_NAME  # Add this if your application needs it
+              valueFrom:
+                configMapKeyRef:
+                  name: clo835
+                  key: GROUP_NAME
+            - name: BACKGROUND_IMAGE  # Add this if your application needs it
+              valueFrom:
+                configMapKeyRef:
+                  name: clo835
+                  key: BACKGROUND_IMAGE
+
+          ports:
+            - containerPort: 81
+          resources:
+            limits:
+              cpu: "0.5"
+            requests:
+              cpu: "0.5"
