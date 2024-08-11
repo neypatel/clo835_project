@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: final
+  labels:
+    app: mysql
+spec:
+  serviceName: mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      serviceAccountName: clo835
+      containers:
+      - name: database-container
+        image: 847201028015.dkr.ecr.us-east-1.amazonaws.com/docker-prod-containers-database:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        envFrom:
+          - secretRef:
+              name: secrets
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: database-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+      annotations:
+        volume.beta.kubernetes.io/storage-class: gp2
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 2Gi
+      storageClassName: aws-ebs-csi
